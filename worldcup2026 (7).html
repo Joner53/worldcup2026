@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup 2026 — Prediction League</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{--pitch:#0a3d1f;--pitch2:#0d4f28;--gold:#f5c518;--gold2:#e6b000;--chalk:#f0f4f0;--chalk2:#c8d8c8;--red:#e8372a;--card:#122b1a;--card2:#1a3d24;--text:#f0f4f0;--muted:#7a9e82;--border:#1e4a2a;--purple:#9b7ec8;--green:#3a9e5f}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--pitch);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
+header{background:var(--pitch2);border-bottom:3px solid var(--gold);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;gap:16px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--gold)}.logo span{color:var(--chalk)}
+.last-upd{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.hbtn{background:var(--card2);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:6px;cursor:pointer;font:600 13px 'Inter',sans-serif;white-space:nowrap}
+.hbtn:hover{border-color:var(--gold);color:var(--gold)}
+main{max-width:1100px;margin:0 auto;padding:32px 24px 64px}
+/* SETUP */
+#setup{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:32px;margin-bottom:40px}
+#setup h2{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;color:var(--gold);margin-bottom:8px}
+#setup p{color:var(--muted);font-size:14px;margin-bottom:16px;max-width:700px}
+.steps{list-style:none;counter-reset:s;margin-bottom:20px}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;font-size:14px;color:var(--chalk2)}
+.steps li::before{content:counter(s);background:var(--gold);color:var(--pitch);font-family:'Bebas Neue',sans-serif;font-size:16px;min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.steps code{background:var(--pitch2);padding:2px 6px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold)}
+.dz{border:2px dashed var(--border);border-radius:10px;padding:28px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:12px}
+.dz:hover,.dz.over{border-color:var(--gold);background:rgba(245,197,24,.04)}
+.dz-icon{font-size:32px;margin-bottom:8px}
+.dz p{color:var(--muted);font-size:14px;margin:0}.dz p strong{color:var(--chalk)}
+#fi{display:none}
+.err{background:rgba(232,55,42,.1);border:1px solid var(--red);border-radius:8px;padding:12px 16px;color:#ff8a82;font-size:14px;margin-top:12px}
+.ok{background:rgba(10,61,31,.6);border:1px solid var(--gold);border-radius:8px;padding:12px 16px;color:var(--gold);font-size:14px;margin-top:12px}
+/* SECTIONS */
+.sec-ttl{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--gold);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+section{margin-bottom:48px;display:none}
+/* LEADERBOARD */
+.lbt{width:100%;border-collapse:collapse;background:var(--card);border-radius:10px;overflow:hidden}
+.lbt th{background:var(--card2);padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.lbt th.r,.lbt td.r{text-align:right}
+.lbt td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+.lbt tr:last-child td{border-bottom:none}
+.lbt tbody tr{cursor:pointer;transition:background .15s}.lbt tbody tr:hover td{background:var(--card2)}
+.rnk{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--muted);width:48px}
+.rnk.gold{color:#f5c518}.rnk.silver{color:#c0c0c0}.rnk.bronze{color:#cd7f32}
+.pnm{font-weight:600;font-size:15px}
+.sc{text-align:right;font-family:'JetBrains Mono',monospace}
+.stot{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)}
+.bw{width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-left:auto}
+.bf{height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:3px}
+/* PLAYER CARDS */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:border-color .15s,transform .15s;position:relative}
+.pcard:hover{border-color:var(--gold);transform:translateY(-2px)}
+.pcard.has-data::after{content:'✓';position:absolute;top:10px;right:12px;font-size:11px;color:var(--green);font-weight:700}
+.pcnm{font-weight:600;font-size:15px;margin-bottom:4px}
+.pctot{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);line-height:1;margin-bottom:10px}
+.pcbd{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;font-size:11px;color:var(--muted)}
+.pcbd span{display:flex;justify-content:space-between}
+.pcbd b{color:var(--chalk2);font-weight:600}
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(5,20,10,.9);z-index:200;overflow-y:auto;padding:16px}
+.ov.open{display:flex;align-items:flex-start;justify-content:center}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:900px;position:relative;overflow:hidden}
+.mx{position:absolute;top:14px;right:18px;background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;z-index:10;line-height:1}
+.mx:hover{color:var(--text)}
+/* MODAL HEADER */
+.mhdr{padding:24px 28px 0;background:var(--card)}
+.mnm{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--gold);margin-bottom:2px}
+.mrk{font-size:13px;color:var(--muted);margin-bottom:16px}
+.sbd{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.sbi{background:var(--pitch2);border-radius:8px;padding:10px 8px;text-align:center}
+.sbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:3px}
+.sbv{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);line-height:1}
+/* TABS */
+.tabs{display:flex;background:var(--card2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow-x:auto}
+.tab{padding:12px 20px;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s,border-color .15s}
+.tab:hover{color:var(--chalk2)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.pane{display:none;padding:24px 28px 28px}
+.pane.on{display:block}
+/* UPLOAD AREA IN MODAL */
+.upload-area{background:var(--pitch2);border:1px dashed var(--border);border-radius:10px;padding:28px;text-align:center}
+.upload-area p{color:var(--muted);font-size:14px;margin-bottom:4px}
+.upload-area strong{color:var(--chalk2)}
+.ulbl{display:inline-block;background:var(--gold);color:var(--pitch);padding:9px 20px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;margin-top:12px}
+.ulbl:hover{background:var(--gold2)}
+.how-to{margin-top:16px;background:var(--card2);border-radius:8px;padding:14px 16px;text-align:left}
+.how-to p{font-size:13px;color:var(--chalk2);margin-bottom:6px;font-weight:600}
+.how-to ol{font-size:12px;color:var(--muted);padding-left:16px;line-height:2}
+.how-to code{color:var(--gold)}
+/* GROUPS */
+.grp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.grp-card{background:var(--pitch2);border-radius:10px;overflow:hidden}
+.grp-hdr{background:var(--card2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between}
+.grp-ttl{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--gold)}
+.grp-pts{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)}
+.grp-pts span{font-size:11px;font-family:'Inter',sans-serif;color:var(--muted);font-weight:500;margin-left:2px}
+.matches{padding:8px 12px}
+.mrow{display:grid;grid-template-columns:1fr auto auto auto 1fr auto;align-items:center;gap:4px;padding:5px 0;border-bottom:1px solid rgba(30,74,42,.5);font-size:12px}
+.mrow:last-child{border-bottom:none}
+.ht{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.at{text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb{background:var(--card);border-radius:4px;padding:2px 7px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;min-width:24px;text-align:center}
+.sb.blank{color:var(--border)}
+.vs{font-size:10px;color:var(--muted)}
+.pb{font-size:11px;font-weight:700;padding:2px 5px;border-radius:3px;min-width:22px;text-align:center}
+.pb.p5{background:rgba(58,158,95,.2);color:#5dbb7f}
+.pb.p2{background:rgba(245,197,24,.15);color:var(--gold)}
+.pb.p0{background:rgba(232,55,42,.1);color:#ff7070}
+.pb.blank{color:var(--border)}
+.finish{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 12px;border-top:1px solid var(--border)}
+.fi{background:var(--card);border-radius:6px;padding:7px 10px}
+.fi-l{font-size:10px;color:var(--muted);margin-bottom:2px}
+.fi-v{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* KNOCKOUT */
+.kowrap{overflow-x:auto;padding-bottom:8px}
+.kogrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 100px 1fr 1fr 1fr 1fr;gap:4px;min-width:560px}
+.kolbl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:6px}
+.kocol{display:flex;flex-direction:column;gap:4px}
+.kot{background:var(--pitch2);border:1px solid var(--border);border-radius:5px;padding:4px 6px;font-size:11px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:26px;display:flex;align-items:center;justify-content:center}
+.kot.third{border-color:var(--purple);color:var(--purple)}
+.kot.pick{border-color:var(--gold2);color:var(--chalk)}
+.kot.semi{border-color:var(--gold);background:rgba(245,197,24,.08);color:var(--gold);font-weight:600}
+.kot.champ{border-color:var(--gold);background:rgba(245,197,24,.2);color:var(--gold);font-weight:700;font-size:12px}
+.finctr{text-align:center;padding:4px 2px}
+.finlbl{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:4px}
+.trophy{font-size:24px;display:block;margin:5px auto 3px}
+/* AWARDS */
+.award-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.aw{background:var(--pitch2);border-radius:8px;padding:14px}
+.awl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.awv{font-weight:600;font-size:16px}
+@media(max-width:640px){.sbd{grid-template-columns:repeat(3,1fr)}.lbt th.hm,.lbt td.hm{display:none}.award-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">World Cup <span>2026</span></div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="last-upd" id="lupd"></span>
+    <button class="hbtn" onclick="showSetup()">↑ Update Data</button>
+  </div>
+</header>
+<main>
+  <div id="setup">
+    <h2>Load Leaderboard Data</h2>
+    <p>Export the <strong>Leaderboard</strong> sheet from Excel as a CSV file and drop it below. Player profiles are loaded separately — click any player card to upload their individual sheet.</p>
+    <ul class="steps">
+      <li>Open your Excel file and click the <strong>Leaderboard</strong> tab to make it active</li>
+      <li>Click <strong>File → Save a Copy</strong>, choose <code>CSV (Comma delimited)</code>, save it somewhere easy to find</li>
+      <li>Drop that CSV onto the box below — done! Update it any time results change</li>
+    </ul>
+    <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
+      <div class="dz-icon">📂</div>
+      <p><strong>Drop Leaderboard CSV here</strong> or click to browse</p>
+    </div>
+    <input type="file" id="fi" accept=".csv,.txt">
+    <div id="smsg"></div>
+  </div>
+
+  <section id="lbsec">
+    <div class="sec-ttl">🏆 Leaderboard <button class="hbtn" onclick="showSetup()">↑ Update</button></div>
+    <div id="lbcon"></div>
+  </section>
+
+  <section id="psec">
+    <div class="sec-ttl">👥 All Players
+      <span style="font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);letter-spacing:0;font-weight:400">Click a player to view their predictions</span>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+  </section>
+</main>
+
+<!-- MODAL -->
+<div class="ov" id="modal" onclick="closeOut(event)">
+  <div class="modal">
+    <button class="mx" onclick="closeModal()">✕</button>
+    <div class="mhdr" id="mhdr"></div>
+    <div class="tabs" id="mtabs"></div>
+    <div id="mpanes"></div>
+  </div>
+</div>
+
+<script>
+// ── CSV PARSER ────────────────────────────────────────────────────────────────
+function parseCSV(raw){
+  let t=raw.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+  const rows=[];
+  for(const line of t.split('\n')){
+    if(!line.trim())continue;
+    const cols=[];let cur='',inQ=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+      else if(c===','&&!inQ){cols.push(cur.trim());cur='';}
+      else cur+=c;
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+function cv(rows,col,row){return((rows[row]||[])[col]||'').trim()}
+function readFile(file,cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    let text=e.target.result;
+    text=text.replace(/\x97/g,'\u2014').replace(/\x96/g,'-').replace(/\x92/g,"'").replace(/\x91/g,"'");
+    cb(text);
+  };
+  r.readAsText(file,'latin-1');
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let LB=[];
+
+// ── SETUP ─────────────────────────────────────────────────────────────────────
+function showSetup(){
+  document.getElementById('setup').style.display='block';
+  document.getElementById('setup').scrollIntoView({behavior:'smooth'});
+}
+const dz=document.getElementById('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');lbFile(e.dataTransfer.files[0])});
+document.getElementById('fi').addEventListener('change',e=>{if(e.target.files[0])lbFile(e.target.files[0])});
+
+function lbFile(file){
+  if(!file)return;
+  readFile(file,text=>{
+    try{
+      processLB(text);
+      localStorage.setItem('wc26_lb',text);
+      const now=new Date().toLocaleString('en-GB');
+      localStorage.setItem('wc26_lb_date',now);
+      document.getElementById('lupd').textContent='Updated '+now;
+      document.getElementById('smsg').innerHTML='<div class="ok">✓ Leaderboard loaded successfully!</div>';
+      document.getElementById('setup').style.display='none';
+    }catch(err){
+      document.getElementById('smsg').innerHTML=`<div class="err">✗ ${err.message}</div>`;
+    }
+  });
+}
+
+// ── PROCESS LEADERBOARD ───────────────────────────────────────────────────────
+function processLB(text){
+  const rows=parseCSV(text);
+  let hi=rows.findIndex(r=>r.some(c=>/^rank$/i.test(c)||/^player$/i.test(c)));
+  if(hi===-1)hi=2;
+  const hr=rows[hi]||[];
+  let iR=1,iN=2,iG=3,iB12=4,iBr=5,iBG=6,iT=7;
+  hr.forEach((h,i)=>{
+    const v=h.toLowerCase().replace(/[^a-z0-9]/g,'');
+    if(v==='rank')iR=i;
+    if(v==='player'||v==='name')iN=i;
+    if(v==='group'||v==='groups')iG=i;
+    if(/1st/.test(v))iB12=i;
+    if(v==='bracket')iBr=i;
+    if(/boot/.test(v))iBG=i;
+    if(v==='total'||v==='totals')iT=i;
+  });
+  const data=rows.slice(hi+1)
+    .filter(r=>{const n=(r[iN]||'').trim();return n.length>0&&!/^=/.test(n)&&!/leaderboard/i.test(n);})
+    .map((r,i)=>({
+      rank:parseInt(r[iR])||(i+1),
+      name:(r[iN]||'').trim()||`Player ${i+1}`,
+      group:parseFloat(r[iG])||0,
+      br12:parseFloat(r[iB12])||0,
+      bracket:parseFloat(r[iBr])||0,
+      bg:parseFloat(r[iBG])||0,
+      total:parseFloat(r[iT])||0,
+    }));
+  if(data.length===0)throw new Error('No player data found. Make sure the Leaderboard tab was active when saving the CSV.');
+  LB=data;
+  renderLB();renderCards();
+  document.getElementById('lbsec').style.display='block';
+  document.getElementById('psec').style.display='block';
+}
+
+// ── LEADERBOARD ───────────────────────────────────────────────────────────────
+function renderLB(){
+  const max=Math.max(...LB.map(p=>p.total),1);
+  document.getElementById('lbcon').innerHTML=`
+    <table class="lbt"><thead><tr>
+      <th>#</th><th>Player</th>
+      <th class="r hm">Group</th><th class="r hm">1st/2nd</th>
+      <th class="r hm">Bracket</th><th class="r hm">Boot/Glove</th>
+      <th class="r">Total</th>
+    </tr></thead><tbody>${LB.map((p,i)=>{
+      const rc=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+      const m=i===0?'🥇':i===1?'🥈':i===2?'🥉':p.rank;
+      return`<tr onclick="openModal(${i})">
+        <td class="rnk ${rc}">${m}</td>
+        <td><div class="pnm">${p.name}</div></td>
+        <td class="sc hm">${p.group||'—'}</td>
+        <td class="sc hm">${p.br12||'—'}</td>
+        <td class="sc hm">${p.bracket||'—'}</td>
+        <td class="sc hm">${p.bg||'—'}</td>
+        <td><div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
+          <div class="bw"><div class="bf" style="width:${Math.round(p.total/max*100)}%"></div></div>
+          <div class="stot">${p.total}</div>
+        </div></td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+// ── PLAYER CARDS ──────────────────────────────────────────────────────────────
+function renderCards(){
+  document.getElementById('pgrid').innerHTML=LB.map((p,i)=>{
+    const has=!!localStorage.getItem(`wc26_p_${i+1}`);
+    return`<div class="pcard${has?' has-data':''}" onclick="openModal(${i})">
+      <div class="pcnm">${p.name}</div>
+      <div class="pctot">${p.total} pts</div>
+      <div class="pcbd">
+        <span>Groups <b>${p.group||0}</b></span>
+        <span>1st/2nd <b>${p.br12||0}</b></span>
+        <span>Bracket <b>${p.bracket||0}</b></span>
+        <span>Awards <b>${p.bg||0}</b></span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+let curIdx=-1;
+function openModal(idx){
+  curIdx=idx;
+  const p=LB[idx];if(!p)return;
+  const medal=idx===0?'🥇 ':idx===1?'🥈 ':idx===2?'🥉 ':'';
+  const stored=localStorage.getItem(`wc26_p_${idx+1}`);
+
+  document.getElementById('mhdr').innerHTML=`
+    <div class="mnm">${medal}${p.name}</div>
+    <div class="mrk">Rank #${p.rank} &nbsp;·&nbsp; ${p.total} points total</div>
+    <div class="sbd">
+      <div class="sbi"><div class="sbl">Groups</div><div class="sbv">${p.group||0}</div></div>
+      <div class="sbi"><div class="sbl">1st/2nd</div><div class="sbv">${p.br12||0}</div></div>
+      <div class="sbi"><div class="sbl">Bracket</div><div class="sbv">${p.bracket||0}</div></div>
+      <div class="sbi"><div class="sbl">Boot/Glove</div><div class="sbv">${p.bg||0}</div></div>
+      <div class="sbi"><div class="sbl">Total</div><div class="sbv" style="color:var(--gold)">${p.total}</div></div>
+    </div>`;
+
+  document.getElementById('mtabs').innerHTML=`
+    <div class="tab on" onclick="swTab('groups',this)">⚽ Group Picks</div>
+    <div class="tab" onclick="swTab('knockout',this)">🏆 Knockout</div>
+    <div class="tab" onclick="swTab('awards',this)">🥾 Awards</div>`;
+  document.getElementById('mtabs').style.display='flex';
+
+  if(stored){
+    const rows=parseCSV(stored);
+    const d=parsePlayer(rows);
+    document.getElementById('mtabs').style.display='flex';
+    const reupload=`<div style="text-align:right;margin-bottom:12px">
+      <label class="hbtn" style="cursor:pointer">
+        ↑ Re-upload CSV
+        <input type="file" accept=".csv" style="display:none" onchange="loadPlayer(event,${idx})">
+      </label>
+    </div>`;
+    document.getElementById('mpanes').innerHTML=`
+      <div class="pane on" id="pane-groups">${reupload}${buildGroups(d.groups)}</div>
+      <div class="pane" id="pane-knockout">${reupload}${buildKnockout(d.ko)}</div>
+      <div class="pane" id="pane-awards">${reupload}${buildAwards(d.boot,d.glove)}</div>`;
+  } else {
+    document.getElementById('mtabs').style.display='none';
+    document.getElementById('mpanes').innerHTML=`
+      <div class="pane on" id="pane-groups">
+        <div class="upload-area">
+          <div style="font-size:36px;margin-bottom:12px">📋</div>
+          <p style="font-size:15px;color:var(--chalk2);margin-bottom:6px"><strong>No data loaded for ${p.name}</strong></p>
+          <p>Export their sheet from Excel as a CSV and upload it here to see all their predictions and points.</p>
+          <div class="how-to">
+            <p>How to do it:</p>
+            <ol>
+              <li>Open the Excel file and click the <strong>${p.name}</strong> tab</li>
+              <li>Go to <code>File → Save a Copy</code></li>
+              <li>Choose <code>CSV (Comma delimited)</code> and save it</li>
+              <li>Click the button below and select that file</li>
+            </ol>
+          </div>
+          <label class="ulbl" style="font-size:15px;padding:12px 28px;margin-top:16px;display:inline-block">
+            📂 Upload ${p.name}'s CSV
+            <input type="file" accept=".csv" style="display:none" onchange="loadPlayer(event,${idx})">
+          </label>
+        </div>
+      </div>`;
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function swTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pane-'+name).classList.add('on');
+}
+
+function loadPlayer(event,idx){
+  const file=event.target.files[0];if(!file)return;
+  readFile(file,text=>{
+    localStorage.setItem(`wc26_p_${idx+1}`,text);
+    openModal(idx);
+    renderCards(); // refresh tick marks
+  });
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function closeOut(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+// ── PARSE PLAYER CSV ──────────────────────────────────────────────────────────
+// Actual CSV column layout (0-based):
+//   Row 0: col2=name
+//   Row 1: col2=golden boot
+//   Row 2: col2=golden glove, col11=group pts, col13=1st/2nd pts, col15=bracket pts, col17=boot/glove pts, col19=total
+//   Group blocks start at rows 3,15,27,39 (A-C, D-F, G-I, J-L)
+//   Within each block, matches at rows +2 to +7, 1st at row+8, 2nd at row+9
+//   Left group:  hT=0, hS=2, aS=3, aT=4, pts=6
+//   Mid group:   hT=8, hS=10, aS=11, aT=12, pts=14
+//   Right group: hT=16, hS=18, aS=19, aT=20, pts=22
+//   1st/2nd preds: left=col2, mid=col10, right=col18 at row+8/+9
+//   Knockout: R32L=26, R16L=31, QFL=36, SemiL=41, Final=46, SemiR=51, QFR=56, R16R=61, R32R=66
+
+function parsePlayer(rows){
+  const boot=cv(rows,2,1);
+  const glove=cv(rows,2,2);
+
+  const blockStarts=[3,15,27,39];
+  const grpLetters=[['A','B','C'],['D','E','F'],['G','H','I'],['J','K','L']];
+  const grpCols=[
+    {hT:0, hS:2,  aS:3,  aT:4,  pts:6,  f:2,  s:2},   // left
+    {hT:8, hS:10, aS:11, aT:12, pts:14, f:10, s:10},   // mid
+    {hT:16,hS:18, aS:19, aT:20, pts:22, f:18, s:18},   // right
+  ];
+
+  const groups=[];
+  blockStarts.forEach((bs,bi)=>{
+    grpCols.forEach((c,gi)=>{
+      const letter=grpLetters[bi][gi];
+      const matches=[];
+      for(let mr=bs+2;mr<=bs+7;mr++){
+        const hT=cv(rows,c.hT,mr),aT=cv(rows,c.aT,mr);
+        if(!hT&&!aT)continue;
+        const hS=cv(rows,c.hS,mr),aS=cv(rows,c.aS,mr),pts=cv(rows,c.pts,mr);
+        matches.push({hT,aT,hS,aS,pts});
+      }
+      const fst=cv(rows,c.f,bs+8);
+      const snd=cv(rows,c.s,bs+9);
+      groups.push({letter,matches,fst,snd});
+    });
+  });
+
+  // Knockout: find R32 pairs by scanning col26 for non-empty values
+  const allR32rowsL=[4,5,10,11,16,17,22,23,28,29,34,35,40,41,46,47];
+  const r32L=[];
+  for(let i=0;i<allR32rowsL.length;i+=2)
+    r32L.push([cv(rows,26,allR32rowsL[i]),cv(rows,26,allR32rowsL[i+1])]);
+
+  const allR32rowsR=[4,5,10,11,16,17,22,23,28,29,34,35,40,41,46,47];
+  const r32R=[];
+  for(let i=0;i<allR32rowsR.length;i+=2)
+    r32R.push([cv(rows,66,allR32rowsR[i]),cv(rows,66,allR32rowsR[i+1])]);
+
+  // R16: scan col31/61 for non-empty non-header values
+  const r16L=rows.map((r,i)=>cv(rows,31,i)).filter(v=>v&&v!=='R16');
+  const r16R=rows.map((r,i)=>cv(rows,61,i)).filter(v=>v&&v!=='R16');
+  const qfL=rows.map((r,i)=>cv(rows,36,i)).filter(v=>v&&v!=='QF');
+  const qfR=rows.map((r,i)=>cv(rows,56,i)).filter(v=>v&&v!=='QF');
+  const sL=rows.map((r,i)=>cv(rows,41,i)).filter(v=>v&&v!=='SEMI');
+  const sR=rows.map((r,i)=>cv(rows,51,i)).filter(v=>v&&v!=='SEMI');
+  const finals=rows.map((r,i)=>cv(rows,46,i)).filter(v=>v&&v!=='FINAL'&&v!=='CHAMPION');
+  const champs=rows.map((r,i)=>{const v=cv(rows,46,i);return v==='CHAMPION'?cv(rows,46,i+1):null;}).filter(Boolean);
+
+  const ko={
+    r32L,r32R,
+    r16L:r16L.slice(0,4),r16R:r16R.slice(0,4),
+    qfL:qfL.slice(0,2),qfR:qfR.slice(0,2),
+    sL:sL.slice(0,2),sR:sR.slice(0,2),
+    f1:finals[0]||'',f2:finals[1]||'',
+    ch:champs[0]||finals[finals.length-1]||'',
+  };
+
+  return{groups,boot,glove,ko};
+}
+
+// ── BUILD GROUPS ──────────────────────────────────────────────────────────────
+function buildGroups(groups){
+  return`<div class="grp-grid">${groups.map(g=>{
+    const totalPts=g.matches.reduce((s,m)=>s+(parseFloat(m.pts)||0),0);
+    const mrows=g.matches.map(m=>{
+      const hasScore=m.hS!==''||m.aS!=='';
+      const p=parseFloat(m.pts);
+      const pbCls=!hasScore||m.pts===''?'blank':p===5?'p5':p===2?'p2':'p0';
+      const pbTxt=!hasScore?'—':m.pts===''?'?':m.pts;
+      return`<div class="mrow">
+        <span class="ht">${m.hT}</span>
+        <span class="sb ${hasScore?'':'blank'}">${hasScore?(m.hS!==''?m.hS:'?'):'-'}</span>
+        <span class="vs">v</span>
+        <span class="sb ${hasScore?'':'blank'}">${hasScore?(m.aS!==''?m.aS:'?'):'-'}</span>
+        <span class="at">${m.aT}</span>
+        <span class="pb ${pbCls}">${pbTxt}</span>
+      </div>`;
+    }).join('');
+    return`<div class="grp-card">
+      <div class="grp-hdr">
+        <div class="grp-ttl">Group ${g.letter}</div>
+        <div class="grp-pts">${totalPts||0}<span>pts</span></div>
+      </div>
+      <div class="matches">${mrows}</div>
+      <div class="finish">
+        <div class="fi"><div class="fi-l">🥇 1st pick</div><div class="fi-v">${g.fst||'—'}</div></div>
+        <div class="fi"><div class="fi-l">🥈 2nd pick</div><div class="fi-v">${g.snd||'—'}</div></div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// ── BUILD KNOCKOUT ────────────────────────────────────────────────────────────
+function buildKnockout(ko){
+  const t=(n,c='')=>n?`<div class="kot ${c}" title="${n}">${n}</div>`:`<div class="kot"></div>`;
+  return`<div class="kowrap">
+    <div class="kogrid" style="margin-bottom:4px">
+      <div class="kolbl">R32</div><div class="kolbl">R16</div><div class="kolbl">QF</div><div class="kolbl">Semi</div>
+      <div></div>
+      <div class="kolbl">Semi</div><div class="kolbl">QF</div><div class="kolbl">R16</div><div class="kolbl">R32</div>
+    </div>
+    <div class="kogrid">
+      <div class="kocol">${ko.r32L.map(([a,b])=>t(a)+t(b,'third')).join('')}</div>
+      <div class="kocol" style="justify-content:space-around">${ko.r16L.map(v=>t(v,v?'pick':'')).join('')}</div>
+      <div class="kocol" style="justify-content:space-around">${ko.qfL.map(v=>t(v,v?'pick':'')).join('')}</div>
+      <div class="kocol" style="justify-content:center">${ko.sL.map(v=>t(v,v?'semi':'')).join('')}</div>
+      <div class="finctr">
+        <div class="finlbl">Final</div>
+        ${t(ko.f1,ko.f1?'semi':'')}${t(ko.f2,ko.f2?'semi':'')}
+        <span class="trophy">🏆</span>${t(ko.ch,ko.ch?'champ':'')}
+      </div>
+      <div class="kocol" style="justify-content:center">${ko.sR.map(v=>t(v,v?'semi':'')).join('')}</div>
+      <div class="kocol" style="justify-content:space-around">${ko.qfR.map(v=>t(v,v?'pick':'')).join('')}</div>
+      <div class="kocol" style="justify-content:space-around">${ko.r16R.map(v=>t(v,v?'pick':'')).join('')}</div>
+      <div class="kocol">${ko.r32R.map(([a,b])=>t(a)+t(b,'third')).join('')}</div>
+    </div>
+  </div>`;
+}
+
+// ── BUILD AWARDS ──────────────────────────────────────────────────────────────
+function buildAwards(boot,glove){
+  return`<div class="award-row">
+    <div class="aw"><div class="awl">🥾 Golden Boot Prediction</div>
+      <div class="awv">${boot||'<span style="color:var(--muted)">Not entered</span>'}</div></div>
+    <div class="aw"><div class="awl">🧤 Golden Glove Prediction</div>
+      <div class="awv">${glove||'<span style="color:var(--muted)">Not entered</span>'}</div></div>
+  </div>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  const saved=localStorage.getItem('wc26_lb');
+  if(saved){
+    try{
+      processLB(saved);
+      const d=localStorage.getItem('wc26_lb_date');
+      if(d)document.getElementById('lupd').textContent='Updated '+d;
+      document.getElementById('setup').style.display='none';
+    }catch(e){}
+  }
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+});
+</script>
+</body>
+</html>
