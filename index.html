@@ -566,13 +566,17 @@ function buildAwards(boot,glove){
   const res = window.BAKED_RESULTS || {};
   const bootCorrect = res.boot && boot && res.boot.toLowerCase()===boot.toLowerCase();
   const gloveCorrect = res.glove && glove && res.glove.toLowerCase()===glove.toLowerCase();
-  const bootResult = res.boot ? ` <span style="color:var(--muted);font-size:12px">(Result: ${res.boot})</span>` : '';
-  const gloveResult = res.glove ? ` <span style="color:var(--muted);font-size:12px">(Result: ${res.glove})</span>` : '';
+  const bootResult = res.boot ? `<span style="color:var(--muted);font-size:12px"> (Result: ${res.boot})</span>` : '';
+  const gloveResult = res.glove ? `<span style="color:var(--muted);font-size:12px"> (Result: ${res.glove})</span>` : '';
   return`<div class="award-row">
-    <div class="aw"><div class="awl">🥾 Golden Boot Prediction</div>
-      <div class="awv">${boot||'<span style="color:var(--muted)">Not entered</span>'}</div></div>
-    <div class="aw"><div class="awl">🧤 Golden Glove Prediction</div>
-      <div class="awv">${glove||'<span style="color:var(--muted)">Not entered</span>'}</div></div>
+    <div class="aw" style="${bootCorrect?'border:1px solid var(--green);background:rgba(58,158,95,.08)':''}">
+      <div class="awl">🥾 Golden Boot ${bootCorrect?'<span style="color:var(--green);font-weight:700">✓ +25 pts</span>':''}</div>
+      <div class="awv">${boot||'<span style="color:var(--muted)">Not entered</span>'}${bootResult}</div>
+    </div>
+    <div class="aw" style="${gloveCorrect?'border:1px solid var(--green);background:rgba(58,158,95,.08)':''}">
+      <div class="awl">🧤 Golden Glove ${gloveCorrect?'<span style="color:var(--green);font-weight:700">✓ +25 pts</span>':''}</div>
+      <div class="awv">${glove||'<span style="color:var(--muted)">Not entered</span>'}${gloveResult}</div>
+    </div>
   </div>`;
 }
 
