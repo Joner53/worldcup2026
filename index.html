@@ -544,29 +544,43 @@ function buildGroups(groups){
 function buildKnockout(ko){
   const res = window.BAKED_RESULTS || {};
   // Build sets per round so we know which round a team was correctly predicted
-  const rounds = [
-    { teams: new Set([...(res.r32L||[]),...(res.r32R||[])]), pts: 5,  played: (res.r32L||[]).length>0||(res.r32R||[]).length>0 },
-    { teams: new Set([...(res.r16L||[]),...(res.r16R||[])]), pts: 10, played: (res.r16L||[]).length>0||(res.r16R||[]).length>0 },
-    { teams: new Set([...(res.qfL||[]), ...(res.qfR||[])]),  pts: 15, played: (res.qfL||[]).length>0||(res.qfR||[]).length>0 },
-    { teams: new Set([...(res.sL||[]),  ...(res.sR||[])]),   pts: 20, played: (res.sL||[]).length>0||(res.sR||[]).length>0 },
-    { teams: new Set([...(res.finals||[])]),                  pts: 25, played: (res.finals||[]).length>0 },
-    { teams: new Set([res.champion].filter(Boolean)),         pts: 50, played: !!res.champion },
-  ];
+  // All known results per round as sets
+  const r32all = new Set([...(res.r32L||[]),...(res.r32R||[])]);
+  const r16all = new Set([...(res.r16L||[]),...(res.r16R||[])]);
+  const qfall  = new Set([...(res.qfL||[]), ...(res.qfR||[])]);
+  const sall   = new Set([...(res.sL||[]),  ...(res.sR||[])]);
+  const falls  = new Set([...(res.finals||[])]);
+  const chset  = new Set([res.champion].filter(Boolean));
+  // Total expected teams per round (all 16 R32 slots, all 8 R16 etc)
+  const r32total = 16, r16total = 8, qftotal = 4, stotal = 4, ftotal = 2;
   // t(name, roundIndex, baseClass)
-  // roundIndex: 0=R32, 1=R16, 2=QF, 3=Semi, 4=Final, 5=Champ
+  // For R32: only mark as played if ALL 16 slots are filled (all groups done)
+  // Better: mark as played only if this specific team appears in results OR the round is fully complete
   const t = (n, ri, c='') => {
     if (!n) return '<div class="kot"></div>';
-    const round = rounds[ri] || {};
-    if (!round.played) {
-      // Round hasn't happened yet — pending
-      return `<div class="kot ko-pending ${c}" title="${n}">${n} …</div>`;
-    }
-    if (round.teams.has(n)) {
-      // Correct! Team made it through this round
-      return `<div class="kot ko-correct ${c}" title="${n}">${n} ✓ (+${round.pts})</div>`;
+    // Determine if result is known for this specific pick
+    const roundSets = [r32all, r16all, qfall, sall, falls, chset];
+    const roundPts  = [5, 10, 15, 20, 25, 50];
+    const roundFull = [
+      r32all.size >= r32total,           // R32 fully played when all 16 known
+      r16all.size >= r16total,           // R16 fully played when all 8 known
+      qfall.size  >= qftotal,
+      sall.size   >= stotal,
+      falls.size  >= ftotal,
+      chset.size  >= 1,
+    ];
+    const knownSet = roundSets[ri] || new Set();
+    const isFull   = roundFull[ri] || false;
+    const pts      = roundPts[ri]  || 0;
+    if (knownSet.has(n)) {
+      // Team is in the actual results — correct!
+      return \`<div class="kot ko-correct \${c}" title="\${n}">\${n} ✓ (+\${pts})</div>\`;
+    } else if (isFull) {
+      // Round fully complete and team not in results — wrong
+      return \`<div class="kot ko-wrong \${c}" title="\${n}">\${n} ✗</div>\`;
     } else {
-      // Wrong — team didn't make it
-      return `<div class="kot ko-wrong ${c}" title="${n}">${n} ✗</div>`;
+      // Round not fully complete — pending (we don't know yet)
+      return \`<div class="kot ko-pending \${c}" title="\${n}">\${n} …</div>\`;
     }
   };
   const legend = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">
