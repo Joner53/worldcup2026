@@ -574,13 +574,13 @@ function buildKnockout(ko){
     const pts      = roundPts[ri]  || 0;
     if (knownSet.has(n)) {
       // Team is in the actual results — correct!
-      return \`<div class="kot ko-correct \${c}" title="\${n}">\${n} ✓ (+\${pts})</div>\`;
+      return `<div class="kot ko-correct ${c}" title="${n}">${n} ✓ (+${pts})</div>`;
     } else if (isFull) {
       // Round fully complete and team not in results — wrong
-      return \`<div class="kot ko-wrong \${c}" title="\${n}">\${n} ✗</div>\`;
+      return `<div class="kot ko-wrong ${c}" title="${n}">${n} ✗</div>`;
     } else {
       // Round not fully complete — pending (we don't know yet)
-      return \`<div class="kot ko-pending \${c}" title="\${n}">\${n} …</div>\`;
+      return `<div class="kot ko-pending ${c}" title="${n}">${n} …</div>`;
     }
   };
   const legend = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">
