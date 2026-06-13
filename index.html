@@ -114,9 +114,11 @@ section{margin-bottom:48px;display:none}
 .fi-v{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* KNOCKOUT */
 .kowrap{overflow-x:auto;padding-bottom:8px}
-.kogrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 100px 1fr 1fr 1fr 1fr;gap:4px;min-width:560px}
+.kobrk{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 110px 1fr 1fr 1fr 1fr;gap:0 4px;min-width:620px}
 .kolbl{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:6px}
-.kocol{display:flex;flex-direction:column;gap:4px}
+.kocol{display:flex;flex-direction:column}
+.korow{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 110px 1fr 1fr 1fr 1fr;gap:0 4px}
+.kosp{flex:1}
 .kot{background:var(--pitch2);border:1px solid var(--border);border-radius:5px;padding:4px 6px;font-size:11px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:26px;display:flex;align-items:center;justify-content:center}
 .kot.third{border-color:var(--purple);color:var(--purple)}
 .kot.pick{border-color:var(--gold2);color:var(--chalk)}
@@ -125,7 +127,7 @@ section{margin-bottom:48px;display:none}
 .kot.ko-wrong{border-color:var(--red)!important;color:#ff7070!important;background:rgba(232,55,42,.1)!important;}
 .kot.ko-pending{border-color:#5a7a8a!important;color:#8ab4c4!important;background:rgba(90,120,140,.1)!important;font-style:italic}
 .kot.champ{border-color:var(--gold);background:rgba(245,197,24,.2);color:var(--gold);font-weight:700;font-size:12px}
-.finctr{text-align:center;padding:4px 2px}
+.finctr{text-align:center;padding:4px 2px;display:flex;flex-direction:column;justify-content:center}
 .finlbl{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--gold);letter-spacing:1px;margin-bottom:4px}
 .trophy{font-size:24px;display:block;margin:5px auto 3px}
 /* AWARDS */
@@ -543,73 +545,155 @@ function buildGroups(groups){
 // ── BUILD KNOCKOUT ────────────────────────────────────────────────────────────
 function buildKnockout(ko){
   const res = window.BAKED_RESULTS || {};
-  // Build sets per round so we know which round a team was correctly predicted
-  // All known results per round as sets
   const r32all = new Set([...(res.r32L||[]),...(res.r32R||[])]);
   const r16all = new Set([...(res.r16L||[]),...(res.r16R||[])]);
   const qfall  = new Set([...(res.qfL||[]), ...(res.qfR||[])]);
   const sall   = new Set([...(res.sL||[]),  ...(res.sR||[])]);
   const falls  = new Set([...(res.finals||[])]);
   const chset  = new Set([res.champion].filter(Boolean));
-  // Total expected teams per round (all 16 R32 slots, all 8 R16 etc)
-  const r32total = 16, r16total = 8, qftotal = 4, stotal = 4, ftotal = 2;
-  // t(name, roundIndex, baseClass)
-  // For R32: only mark as played if ALL 16 slots are filled (all groups done)
-  // Better: mark as played only if this specific team appears in results OR the round is fully complete
+  const r32total=16, r16total=8, qftotal=4, stotal=4, ftotal=2;
   const t = (n, ri, c='') => {
     if (!n) return '<div class="kot"></div>';
-    // Determine if result is known for this specific pick
-    const roundSets = [r32all, r16all, qfall, sall, falls, chset];
-    const roundPts  = [5, 10, 15, 20, 25, 50];
-    const roundFull = [
-      r32all.size >= r32total,           // R32 fully played when all 16 known
-      r16all.size >= r16total,           // R16 fully played when all 8 known
-      qfall.size  >= qftotal,
-      sall.size   >= stotal,
-      falls.size  >= ftotal,
-      chset.size  >= 1,
-    ];
-    const knownSet = roundSets[ri] || new Set();
-    const isFull   = roundFull[ri] || false;
-    const pts      = roundPts[ri]  || 0;
-    if (knownSet.has(n)) {
-      // Team is in the actual results — correct!
-      return `<div class="kot ko-correct ${c}" title="${n}">${n} ✓ (+${pts})</div>`;
-    } else if (isFull) {
-      // Round fully complete and team not in results — wrong
-      return `<div class="kot ko-wrong ${c}" title="${n}">${n} ✗</div>`;
-    } else {
-      // Round not fully complete — pending (we don't know yet)
-      return `<div class="kot ko-pending ${c}" title="${n}">${n} …</div>`;
-    }
+    const roundSets=[r32all,r16all,qfall,sall,falls,chset];
+    const roundPts =[5,10,15,20,25,50];
+    const roundFull=[r32all.size>=r32total,r16all.size>=r16total,qfall.size>=qftotal,sall.size>=stotal,falls.size>=ftotal,chset.size>=1];
+    const knownSet=roundSets[ri]||new Set();
+    const isFull=roundFull[ri]||false;
+    const pts=roundPts[ri]||0;
+    if(knownSet.has(n)) return '<div class="kot ko-correct '+c+'" title="'+n+'">'+n+' \u2713 (+'+pts+')</div>';
+    if(isFull)          return '<div class="kot ko-wrong  '+c+'" title="'+n+'">'+n+' \u2717</div>';
+    return                     '<div class="kot ko-pending '+c+'" title="'+n+'">'+n+' \u2026</div>';
   };
-  const legend = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(58,158,95,.12);border:1px solid var(--green);display:inline-block"></span><span style="color:#5dbb7f">✓ Correct</span></span>
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(232,55,42,.1);border:1px solid var(--red);display:inline-block"></span><span style="color:#ff7070">✗ Wrong</span></span>
-    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(90,120,140,.1);border:1px solid #5a7a8a;display:inline-block"></span><span style="color:#8ab4c4">… Not played yet</span></span>
-  </div>`;
-  return legend+`<div class="kowrap">
-    <div class="kogrid" style="margin-bottom:4px">
-      <div class="kolbl">R32</div><div class="kolbl">R16</div><div class="kolbl">QF</div><div class="kolbl">Semi</div>
-      <div></div>
-      <div class="kolbl">Semi</div><div class="kolbl">QF</div><div class="kolbl">R16</div><div class="kolbl">R32</div>
-    </div>
-    <div class="kogrid">
-      <div class="kocol">${ko.r32L.map(([a,b])=>t(a,0)+t(b,0,'third')).join('')}</div>
-      <div class="kocol" style="justify-content:space-around">${ko.r16L.map(v=>t(v,1,v?'pick':'')).join('')}</div>
-      <div class="kocol" style="justify-content:space-around">${ko.qfL.map(v=>t(v,2,v?'pick':'')).join('')}</div>
-      <div class="kocol" style="justify-content:center">${ko.sL.map(v=>t(v,3,v?'semi':'')).join('')}</div>
-      <div class="finctr">
-        <div class="finlbl">Final</div>
-        ${t(ko.f1,4,ko.f1?'semi':'')}${t(ko.f2,4,ko.f2?'semi':'')}
-        <span class="trophy">🏆</span>${t(ko.ch,5,ko.ch?'champ':'')}
-      </div>
-      <div class="kocol" style="justify-content:center">${ko.sR.map(v=>t(v,3,v?'semi':'')).join('')}</div>
-      <div class="kocol" style="justify-content:space-around">${ko.qfR.map(v=>t(v,2,v?'pick':'')).join('')}</div>
-      <div class="kocol" style="justify-content:space-around">${ko.r16R.map(v=>t(v,1,v?'pick':'')).join('')}</div>
-      <div class="kocol">${ko.r32R.map(([a,b])=>t(a,0)+t(b,0,'third')).join('')}</div>
-    </div>
-  </div>`;
+  const sp = '<div class="kosp"></div>';
+  // Each "slot" in the bracket is 30px (26px min-height + 4px gap).
+  // The bracket has 16 R32 pairs per side (8 left, 8 right) = 16 rows of 2 teams each.
+  // We build 16 "rows" each holding: r32pair | r16 | qf | semi | final/champ | semi | qf | r16 | r32pair
+  // R16 teams appear centred between pairs 0-1, 2-3, 4-5, 6-7 (index maps to pairs[i*2] and [i*2+1])
+  // QF teams appear centred between r16 0-1 and 2-3
+  // Semi teams centred between qf 0-1
+  // The bracket is built using flex columns where spacers fill gaps.
+
+  // Helper: build a bracket column for one side
+  // pairs: array of [a,b] (r32), winners: array (r16/qf/semi), ri: round index, cls: extra class
+  // Each pair takes 2 slots; each winner sits between every 2 pairs feeding it
+  function bracketCol(teams, ri, cls, totalSlots, teamsPerSlot) {
+    // totalSlots = 16 (number of R32 pairs per side)
+    // teamsPerSlot = how many R32 pairs one team in this round covers (2 for R16, 4 for QF, 8 for Semi)
+    var out = '<div class="kocol">';
+    var slotHeight = 30; // px per R32 pair slot
+    var pairHeight = slotHeight * 2; // each R32 pair occupies 2 slots (2 teams)
+    for(var i=0;i<teams.length;i++){
+      var spaceAbove = (i===0) ? teamsPerSlot * pairHeight / 2 - 13 : (teamsPerSlot * pairHeight) - 26;
+      out += '<div style="flex:0 0 '+Math.round(spaceAbove)+'px"></div>';
+      out += t(teams[i], ri, cls);
+    }
+    // fill remaining space
+    var usedSlots = teams.length * teamsPerSlot;
+    var remaining = (totalSlots - usedSlots) * pairHeight;
+    if(remaining > 0) out += '<div style="flex:0 0 '+remaining+'px"></div>';
+    out += '</div>';
+    return out;
+  }
+
+  // Build the R32 columns (left and right) — straightforward, 8 pairs of 2 teams
+  function r32Col(pairs, ri) {
+    var out = '<div class="kocol" style="gap:4px">';
+    for(var i=0;i<pairs.length;i++){
+      if(i>0) out += '<div style="flex:0 0 4px"></div>';
+      out += t(pairs[i][0], ri, '') + t(pairs[i][1], ri, 'third');
+    }
+    out += '</div>';
+    return out;
+  }
+
+  // R32 pair height = (26+26+4) = 56px; gap between pairs = 4px
+  // So each pair block = 56px, gap = 4px → total for 8 pairs = 8*56 + 7*4 = 476px
+  // R16 (4 teams): each team centred over 2 pairs = 56+4+56=116px span, centred = offset 116/2 - 13 = 45px from top of pair
+  // QF (2 teams): centred over 4 pairs = 2*116+4 = 236px span, centre = 118-13=105px
+  // Semi (1 team): centred over 8 pairs = full height / 2 - 13
+
+  // Simpler approach: use CSS grid with explicit row spans
+  // Use a 16-row grid (one row per R32 slot/team), each row = fixed height
+  // R32: rows 1-2 = pair[0], rows 3-4 = pair[1], ... rows 15-16 = pair[7]
+  // R16[0] spans rows 1-4 (centred), R16[1] spans rows 5-8, R16[2] spans 9-12, R16[3] spans 13-16
+  // QF[0] spans rows 1-8, QF[1] spans rows 9-16
+  // Semi spans rows 1-16
+  // Right side mirrors
+
+  const ROWS = 16; // 2 teams per R32 pair × 8 pairs
+  const ROW_H = 28; // px
+  const GAP = 3;    // px gap between rows
+
+  function colGrid(teams, ri, cls, rowSpan) {
+    // rowSpan: how many rows each team spans
+    var out = '<div style="display:grid;grid-template-rows:repeat('+ROWS+','+(ROW_H+GAP)+'px);gap:0">';
+    for(var i=0;i<teams.length;i++){
+      var startRow = i * rowSpan + 1;
+      var midOffset = Math.floor((rowSpan * (ROW_H+GAP) - ROW_H) / 2);
+      out += '<div style="grid-row:'+startRow+'/span '+rowSpan+';display:flex;align-items:center;justify-content:center;padding:'+Math.round(GAP/2)+'px 0">';
+      out += t(teams[i], ri, cls);
+      out += '</div>';
+    }
+    // fill any unused rows
+    if(teams.length * rowSpan < ROWS){
+      var startRow = teams.length * rowSpan + 1;
+      var span = ROWS - teams.length * rowSpan;
+      out += '<div style="grid-row:'+startRow+'/span '+span+'"></div>';
+    }
+    out += '</div>';
+    return out;
+  }
+
+  function r32ColGrid(pairs, ri) {
+    // 8 pairs, each pair = 2 rows
+    var out = '<div style="display:grid;grid-template-rows:repeat('+ROWS+','+(ROW_H+GAP)+'px);gap:0">';
+    for(var i=0;i<8;i++){
+      var a = (pairs[i]||['',''])[0];
+      var b = (pairs[i]||['',''])[1];
+      var row = i*2+1;
+      out += '<div style="grid-row:'+row+';padding:'+(GAP/2)+'px 0">'+t(a,ri,'')+'</div>';
+      out += '<div style="grid-row:'+(row+1)+';padding:'+(GAP/2)+'px 0">'+t(b,ri,'third')+'</div>';
+    }
+    out += '</div>';
+    return out;
+  }
+
+  const legend = '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:11px">'
+    + '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(58,158,95,.12);border:1px solid var(--green);display:inline-block"></span><span style="color:#5dbb7f">\u2713 Correct</span></span>'
+    + '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(232,55,42,.1);border:1px solid var(--red);display:inline-block"></span><span style="color:#ff7070">\u2717 Wrong</span></span>'
+    + '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:rgba(90,120,140,.1);border:1px solid #5a7a8a;display:inline-block"></span><span style="color:#8ab4c4">\u2026 Not played yet</span></span>'
+    + '</div>';
+
+  // Header row
+  var hdr = '<div class="kobrk" style="margin-bottom:4px">'
+    + '<div class="kolbl">R32</div><div class="kolbl">R16</div><div class="kolbl">QF</div><div class="kolbl">Semi</div><div></div>'
+    + '<div class="kolbl">Semi</div><div class="kolbl">QF</div><div class="kolbl">R16</div><div class="kolbl">R32</div>'
+    + '</div>';
+
+  var totalH = ROWS * (ROW_H + GAP);
+
+  // Final/champ centre column
+  var finHtml = '<div class="finctr" style="height:'+totalH+'px">'
+    + '<div class="finlbl">Final</div>'
+    + t(ko.f1, 4, ko.f1?'semi':'')
+    + t(ko.f2, 4, ko.f2?'semi':'')
+    + '<span class="trophy">\uD83C\uDFC6</span>'
+    + t(ko.ch, 5, ko.ch?'champ':'')
+    + '</div>';
+
+  var grid = '<div class="kobrk">'
+    + r32ColGrid(ko.r32L||[], 0)
+    + colGrid(ko.r16L||[], 1, 'pick', 4)
+    + colGrid(ko.qfL||[],  2, 'pick', 8)
+    + colGrid(ko.sL||[],   3, 'semi', 16)
+    + finHtml
+    + colGrid(ko.sR||[],   3, 'semi', 16)
+    + colGrid(ko.qfR||[],  2, 'pick', 8)
+    + colGrid(ko.r16R||[], 1, 'pick', 4)
+    + r32ColGrid(ko.r32R||[], 0)
+    + '</div>';
+
+  return legend + '<div class="kowrap">' + hdr + grid + '</div>';
 }
 
 // ── BUILD AWARDS ──────────────────────────────────────────────────────────────
