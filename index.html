@@ -132,12 +132,11 @@ section{margin-bottom:48px;display:none}
 .trophy{font-size:24px;display:block;margin:5px auto 3px}
 /* AWARDS */
 .award-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-#scoring-guide{margin:0 0 24px}.sg-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px}.sg-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.05em;margin-bottom:12px;color:var(--fg)}.sg-table{display:flex;flex-direction:column;gap:0}.sg-row{display:grid;grid-template-columns:180px 1fr 60px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(30,74,42,.4);font-size:12px;color:var(--muted)}.sg-row:last-child{border-bottom:none}.sg-head{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.5;padding-bottom:6px}.sg-total{font-weight:700;color:var(--fg);padding-top:8px;border-top:2px solid var(--border) !important;border-bottom:none !important}.sg-total .sg-maxval{color:var(--gold);font-size:15px}.sg-pts{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sg-maxval{text-align:right;font-weight:700;color:var(--fg)}.sg-pip{display:inline-block;padding:1px 6px;border-radius:3px;font-weight:700;font-size:11px}.sg-green{background:rgba(74,222,128,.18);color:var(--green)}.sg-gold{background:rgba(212,175,55,.22);color:var(--gold)}.sg-purple{background:rgba(167,139,250,.2);color:#a78bfa}
 .aw{background:var(--pitch2);border-radius:8px;padding:14px}
 .awl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
 .awv{font-weight:600;font-size:16px}
 @media(max-width:640px){.sbd{grid-template-columns:repeat(3,1fr)}.lbt th.hm,.lbt td.hm{display:none}.award-row{grid-template-columns:1fr}}
-</style>
+#scoring-guide{margin:0 0 24px}.sg-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px}.sg-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.05em;margin-bottom:12px;color:var(--fg)}.sg-table{display:flex;flex-direction:column;gap:0}.sg-row{display:grid;grid-template-columns:180px 1fr 60px;align-items:center;padding:6px 0;border-bottom:1px solid rgba(30,74,42,.4);font-size:12px;color:var(--muted)}.sg-row:last-child{border-bottom:none}.sg-head{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;opacity:.5;padding-bottom:6px}.sg-total{font-weight:700;color:var(--fg);padding-top:8px;border-top:2px solid var(--border) !important;border-bottom:none !important}.sg-total .sg-maxval{color:var(--gold);font-size:15px}.sg-pts{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.sg-maxval{text-align:right;font-weight:700;color:var(--fg)}.sg-pip{display:inline-block;padding:1px 6px;border-radius:3px;font-weight:700;font-size:11px}.sg-green{background:rgba(74,222,128,.18);color:var(--green)}.sg-gold{background:rgba(212,175,55,.22);color:var(--gold)}.sg-purple{background:rgba(167,139,250,.2);color:#a78bfa}</style>
 </head>
 <body>
 <header>
@@ -171,21 +170,20 @@ section{margin-bottom:48px;display:none}
 
   <section id="scoring-guide">
     <div class="sg-box">
-      <div class="sg-title">📋 Scoring Guide</div>
+      <div class="sg-title">&#128203; Scoring Guide</div>
       <div class="sg-table">
         <div class="sg-row sg-head"><span>Round</span><span>Points</span><span>Max</span></div>
-        <div class="sg-row"><span>⚽ Group Stage</span><span class="sg-pts"><span class="sg-pip sg-green">5</span> exact &nbsp;<span class="sg-pip sg-gold">2</span> result &nbsp;<span class="sg-pip sg-purple">5/2</span> 1st/2nd</span><span class="sg-maxval">360</span></div>
-        <div class="sg-row"><span>🏆 Round of 32</span><span class="sg-pts"><span class="sg-pip sg-green">2</span> per team</span><span class="sg-maxval">64</span></div>
-        <div class="sg-row"><span>🏆 Round of 16</span><span class="sg-pts"><span class="sg-pip sg-green">5</span> per team</span><span class="sg-maxval">80</span></div>
-        <div class="sg-row"><span>🏆 Quarter-Finals</span><span class="sg-pts"><span class="sg-pip sg-green">10</span> per team</span><span class="sg-maxval">80</span></div>
-        <div class="sg-row"><span>🏆 Semi-Finals</span><span class="sg-pts"><span class="sg-pip sg-green">20</span> per team</span><span class="sg-maxval">80</span></div>
-        <div class="sg-row"><span>🏆 Final</span><span class="sg-pts"><span class="sg-pip sg-green">25</span> finalist &nbsp;<span class="sg-pip sg-gold">50</span> champion</span><span class="sg-maxval">100</span></div>
-        <div class="sg-row"><span>🥾 Awards</span><span class="sg-pts"><span class="sg-pip sg-green">25</span> boot &nbsp;<span class="sg-pip sg-green">25</span> glove</span><span class="sg-maxval">50</span></div>
-        <div class="sg-row sg-total"><span>🎯 Total</span><span></span><span class="sg-maxval">814</span></div>
+        <div class="sg-row"><span>&#9917; Group Stage</span><span class="sg-pts"><span class="sg-pip sg-green">5</span> exact &nbsp;<span class="sg-pip sg-gold">2</span> result &nbsp;<span class="sg-pip sg-purple">5/2</span> 1st/2nd</span><span class="sg-maxval">360</span></div>
+        <div class="sg-row"><span>&#127942; Round of 32</span><span class="sg-pts"><span class="sg-pip sg-green">2</span> per team</span><span class="sg-maxval">64</span></div>
+        <div class="sg-row"><span>&#127942; Round of 16</span><span class="sg-pts"><span class="sg-pip sg-green">5</span> per team</span><span class="sg-maxval">80</span></div>
+        <div class="sg-row"><span>&#127942; Quarter-Finals</span><span class="sg-pts"><span class="sg-pip sg-green">10</span> per team</span><span class="sg-maxval">80</span></div>
+        <div class="sg-row"><span>&#127942; Semi-Finals</span><span class="sg-pts"><span class="sg-pip sg-green">20</span> per team</span><span class="sg-maxval">80</span></div>
+        <div class="sg-row"><span>&#127942; Final</span><span class="sg-pts"><span class="sg-pip sg-green">25</span> finalist &nbsp;<span class="sg-pip sg-gold">50</span> champion</span><span class="sg-maxval">100</span></div>
+        <div class="sg-row"><span>&#129470; Awards</span><span class="sg-pts"><span class="sg-pip sg-green">25</span> boot &nbsp;<span class="sg-pip sg-green">25</span> glove</span><span class="sg-maxval">50</span></div>
+        <div class="sg-row sg-total"><span>&#127919; Total</span><span></span><span class="sg-maxval">814</span></div>
       </div>
     </div>
   </section>
-
   <section id="psec">
     <div class="sec-ttl">👥 All Players
       <span style="font-family:'Inter',sans-serif;font-size:12px;color:var(--muted);letter-spacing:0;font-weight:400">Click a player to view their predictions</span>
@@ -739,7 +737,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('lbsec').style.display='block';
     document.getElementById('psec').style.display='block';
     document.getElementById('setup').style.display='none';
-    document.getElementById('lupd').textContent='Last updated: 16 June 2026, 12:09';
+    document.getElementById('lupd').textContent='Last updated: 16 June 2026, 12:36';
   } else {
     const saved=localStorage.getItem('wc26_lb');
     if(saved){
