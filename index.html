@@ -168,7 +168,7 @@ section{margin-bottom:48px;display:none}
     <div id="lbcon"></div>
   </section>
 
-  <section id="scoring-guide">
+  <section id="scoring-guide" style="display:none">
     <div class="sg-box">
       <div class="sg-title">&#128203; Scoring Guide</div>
       <div class="sg-table">
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('scoring-guide').style.display='block';
     document.getElementById('psec').style.display='block';
     document.getElementById('setup').style.display='none';
-    document.getElementById('lupd').textContent='Last updated: 16 June 2026, 12:36';
+    document.getElementById('lupd').textContent='Last updated: 16 June 2026, 12:58';
   } else {
     const saved=localStorage.getItem('wc26_lb');
     if(saved){
