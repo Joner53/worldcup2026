@@ -620,6 +620,10 @@ function buildKnockout(ko){
     if(knownSet.has(n)) return '<div class="kot ko-correct '+c+'" title="'+n+'">'+n+' \u2713 (+'+pts+')</div>';
     if(isFull)          return '<div class="kot ko-wrong '+c+'" title="'+n+'">'+n+' \u2717</div>';
     if(knockedOut.has(n)) return '<div class="kot ko-wrong '+c+'" title="'+n+'">'+n+' \u2717</div>';
+    // R32 entrant list (the 32 teams) is final once full — anyone picked at a
+    // later round who never even made that list (e.g. missed out on best-3rd-
+    // place) never qualified for the knockouts and should be crossed too.
+    if(ri>0 && roundFull[0] && !r32all.has(n)) return '<div class="kot ko-wrong '+c+'" title="'+n+'">'+n+' \u2717</div>';
     return                     '<div class="kot ko-pending '+c+'" title="'+n+'">'+n+' \u2026</div>';
   };
 
@@ -778,7 +782,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('scoring-guide').style.display='block';
     document.getElementById('psec').style.display='block';
     document.getElementById('setup').style.display='none';
-    document.getElementById('lupd').textContent='Last updated: 30 June 2026, 11:00';
+    document.getElementById('lupd').textContent='Last updated: 30 June 2026, 11:22';
   } else {
     const saved=localStorage.getItem('wc26_lb');
     if(saved){
